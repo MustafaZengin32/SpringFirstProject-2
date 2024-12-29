@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,68 +23,91 @@ public class StudentServiceimpl implements IStudentService {
     @Override
     public DtoStudent saveStudent(DtoStudentIU dtoStudentIU) {
 
-        DtoStudent response=new DtoStudent();
+        DtoStudent response = new DtoStudent();
 
-        Student student=new Student();
+        Student student = new Student();
 
-        BeanUtils.copyProperties(dtoStudentIU,student);
+        BeanUtils.copyProperties(dtoStudentIU, student);
 
-        Student dbStudent=studentRepository.save(student);
+        Student dbStudent = studentRepository.save(student);
 
-        BeanUtils.copyProperties(dbStudent,response);
+        BeanUtils.copyProperties(dbStudent, response);
 
         return response;
     }
 
     @Override
-    public List<Student> getAllStudents() {
+    public List<DtoStudent> getAllStudents() {
 
-        return studentRepository.findAll();
+        List<DtoStudent> dtoList = new ArrayList<>();
+
+        List<Student> studentList = studentRepository.findAll();
+
+        for (Student student : studentList) {
+            DtoStudent dto = new DtoStudent();
+            BeanUtils.copyProperties(student, dto);
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
     @Override
-    public Optional<Student> getStudentById(Integer id) {
+    public Optional<DtoStudent> getStudentById(Integer id) {
 
-        return studentRepository.findById(id);
+        DtoStudent dto = new DtoStudent();
+
+        Optional<Student> optional = studentRepository.findById(id);
+
+        if (optional.isPresent()) {
+
+            Student dbStudent = optional.get();
+
+            BeanUtils.copyProperties(dbStudent, dto);
+        }
+
+        return Optional.of(dto);
     }
 
     @Override
     public void deleteStudent(Integer id) {
 
-        Optional<Student> dbstudent = getStudentById(id);
+        Optional<Student> optional = studentRepository.findById(id);
 
-        if (dbstudent.isPresent()) {
-            Student student = dbstudent.get();
-            studentRepository.deleteById(student.getId());
+        if (optional.isPresent()) {
+            studentRepository.delete(optional.get());
         }
 
 
     }
 
     @Override
-    public Student updateStudent(Integer id, Student updateStudent) {
+    public DtoStudent updateStudent(Integer id, DtoStudentIU dtoStudentIU) {
 
-        Optional<Student> dbStudent = getStudentById(id);
+        DtoStudent dto = new DtoStudent();
 
+        Optional<Student> optional = studentRepository.findById(id);
 
-        if (dbStudent.isPresent()) {
+        if (optional.isPresent()) {
 
-            Student student = dbStudent.get();
+            Student dbStudent = optional.get();
 
-            student.setFirstName(updateStudent.getFirstName());
+            dbStudent.setFirstName(dtoStudentIU.getFirstName());
+            dbStudent.setLastName(dtoStudentIU.getLastName());
+            dbStudent.setBirthOfDate(dtoStudentIU.getBirthOfDate());
 
-            student.setLastName(updateStudent.getLastName());
+            Student updateStudent = studentRepository.save(dbStudent);
 
-            student.setBirthOfDate(updateStudent.getBirthOfDate());
+            BeanUtils.copyProperties(updateStudent, dto);
 
-            studentRepository.save(student);
-
-            return student;
-
+            return dto;
         }
 
         return null;
+
     }
 
-
 }
+
+
+
