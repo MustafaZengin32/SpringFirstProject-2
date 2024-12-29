@@ -41,7 +41,8 @@ public class StudentServiceimpl implements IStudentService {
 
         List<DtoStudent> dtoList = new ArrayList<>();
 
-        List<Student> studentList = studentRepository.findAll();
+//        List<Student> studentList = studentRepository.findAll(); //Repo da ozel method ile cagiracagim artik
+        List<Student> studentList = studentRepository.findAllStudents();
 
         for (Student student : studentList) {
             DtoStudent dto = new DtoStudent();
@@ -57,7 +58,7 @@ public class StudentServiceimpl implements IStudentService {
 
         DtoStudent dto = new DtoStudent();
 
-        Optional<Student> optional = studentRepository.findById(id);
+        Optional<Student> optional = studentRepository.findStudentById(id);
 
         if (optional.isPresent()) {
 
