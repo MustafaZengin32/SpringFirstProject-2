@@ -28,4 +28,8 @@ public class Student {
     @Column(name="birth_of_date",nullable = true)
     private String birthOfDate;
 
+
+
+
+
 }

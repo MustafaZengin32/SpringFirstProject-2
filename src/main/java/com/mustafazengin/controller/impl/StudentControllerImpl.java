@@ -5,6 +5,7 @@ import com.mustafazengin.dto.DtoStudent;
 import com.mustafazengin.dto.DtoStudentIU;
 import com.mustafazengin.entities.Student;
 import com.mustafazengin.services.IStudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class StudentControllerImpl implements IStudentController {
 
     @PostMapping(path = "/save")
     @Override
-    public DtoStudent saveStudent(@RequestBody DtoStudentIU dtoStudentIU){
+    public DtoStudent saveStudent(@RequestBody @Valid DtoStudentIU dtoStudentIU){
 
         return studentService.saveStudent(dtoStudentIU);
     }
